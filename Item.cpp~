@@ -1,0 +1,64 @@
+/* EE6411
+Group 12 :
+Name : Anfala Aljamie , Hadeel Almogamsi, Blessing Usoro , Dongfeng Xie
+ID:    16103262       ,  16025547       , 16043006       , 16008766     
+*/
+
+
+#include<cstdlib>
+#include"Item.h"
+
+Item::Item()
+{
+  
+ weight=attack=defence=health = strength= 0;
+
+ int temp = rand()%8;
+
+ switch(temp)
+ {
+  case 0://Sword
+	title = "Sword";
+	check2.weight = check2.weight+10;
+	check2.attack= check2.attack+10;
+  break;
+  case 1://Dagger
+	title = "Dagger";
+	check2.weight = check2.weight+5;
+	check2.attack = check2.attack+5;
+  break;
+  case 2://Plate Armour
+	title = "Plate Armour";
+	check2.weight = check2.weight+40;
+	check2.attack = check2.attack-5;
+	check2.defence = check2.defence+10;
+  break;
+  case 3://Leather Armour
+	title = "Leather Armour";
+	check2.weight = check2.weight+20;
+	check2.defence = check2.defence+5;
+  break;
+  case 4://Large Shield
+	title = "Large Shield";
+	check2.weight = check2.weight+30;
+	check2.attack = check2.attack-5;
+	check2.defence = check2.defence+10;
+  break;
+  case 5://Small Shield
+	title = "Small Shield";
+	check2.weight = check2.weight+10;
+	check2.defence = check2.defence+5;
+  break;
+  case 6://Ring of Life
+	title = "Ring of Life";
+	check2.weight = check2.weight+1;
+	check2.health = check2.health+10;
+  break;
+  case 7://Ring of Strength
+	title = "Ring of Strength";
+	weight = 1;
+        check2.health = check2.health-10;
+	check2.strength = check2.strength+50;
+  break;
+ }
+}

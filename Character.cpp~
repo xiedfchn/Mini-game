@@ -1,0 +1,256 @@
+/* EE6411
+Group 12 :
+Name : Anfala Aljamie , Hadeel Almogamsi, Blessing Usoro , Dongfeng Xie
+ID:    16103262       ,  16025547       , 16043006       , 16008766     
+*/
+
+
+#include<stdio.h>
+#include<cstdlib>
+
+//calling all the related header
+
+#include"Character.h"
+#include"Item.h"
+#include"Map.h"
+
+//this function is to creat a charachter for the enemy
+
+Character CreateCharacter(Race _race)
+{
+ Character temp(_race);
+ return temp;
+}
+
+void Character::InitCharacter(Race _race)
+{
+ race = _race;
+ //intialise the position of
+ pos.x = 0;
+ //instilise the position of y
+ pos.y = 0;
+ //intilise the position of gold
+ gold = 0;
+ 
+ //starting to chose a charecter from the player from this switch
+
+ switch(_race)
+ {
+   //Humen case and ll the race details are initilzed
+ case Human:
+   title = "Human";
+   attack = 30;
+   attackChance = 2/3;
+   defence = 20;
+   defecneChance = 1/2;
+   health = 60;
+   strength = 100;
+   //to finish the switch if Humen are chosen
+   //because if we don't do that it will continue with the switch
+   break;
+  //-----------------//
+  case Elf:
+   title = "Elf";
+   attack = 40;
+   attackChance = 1;
+   defence = 10;
+   defecneChance = 1/4;
+   health = 40;
+   strength = 70;
+  break;
+  //-----------------//
+  case Dwarf:
+   title = "Dwarf";
+   attack = 30;
+   attackChance = 2/3;
+   defence = 20;
+   defecneChance = 2/3;
+   health = 50;
+   strength = 130;
+  break;
+  //-----------------//
+  case Hobbit:
+   title = "Hobbit";
+   attack = 25;
+   attackChance = 1/3;
+   defence = 20;
+   defecneChance = 2/3;
+   health = 70;
+   strength = 85;
+  break;
+  //-----------------//
+  case Orc:
+    /* orc's characters have two different value for attack, attackchance, 
+    defence and defence time */
+   
+   title = "Orc";
+   int temp = rand()%2;
+   attack = (temp == true)?25:45;
+   attackChance = (temp == true)?(1/4):1;
+   defence = (temp == 1)?10:25;
+   defecneChance = (temp == true)?(1/4):(1/2);
+   health = 50;
+   strength = 130;
+  break;
+ }
+}
+//calling default constructor with initilise rece Human
+
+Character::Character()
+{
+ InitCharacter(Human);
+}
+
+//calling the non-default character with chosen Race
+
+Character::Character(Race _race)
+{
+ InitCharacter(_race);
+}
+
+//starting attack function and rules
+//it's called from class character that's declared in character.h
+//it has two parameter the pointer to temp(enemy) and Gametime from Var.h
+
+float Character::Attack(Character *temp,GameTime gameTime)
+{
+
+  //1. condition if this enemy is not dead
+  if(temp->health > 0)
+ {
+   //1.1 condition
+  if(temp->defecneChance <= attackChance)//attack success
+  {
+   temp->health -= attack - temp->defence;
+   gold += 10;
+
+   cout<<"enemy's Health : "<<temp->health<<endl;
+  }
+  //1.2 condition
+  else//attack fail
+  {
+    //depends on enemy race
+    switch(temp->race)
+   {
+    case Elf:
+     temp->health += 1;
+    break;
+    case Hobbit:
+     temp->health -= rand()%6;
+    break;
+    case Orc:
+      //it has two option as we have in the table in the project's sheet
+      //the change depends on time (Daytime) or (NightTime)
+
+      //if the attack on Daytime
+      if(gameTime == Daytime)
+      temp->health -= (attack - temp->defence)*0.25;
+      else
+	//if the attack on NightTime
+      temp->health += 1;
+    break;
+   }
+    //
+   temp->Attack(this,gameTime);
+  }
+ }
+  //2. condition if health < 0
+ else
+ {
+   //print the nae of the dead enemy 
+  cout<<" the "<<temp->title<<" is Dead"<<endl;
+ }
+ 
+ return 0;
+}
+
+//defence function doesn't do any thing as it's appear in the project sheet
+
+float Character::Defence(float attck)
+{
+ return 0;
+}
+
+//We put move function in order to change our direction (Dir) and find an enemy or item
+//We'er calling this function from character.h with parameter (Dir) from (enum command)
+//enum command is defiend in Var.h
+
+void Character::Move(Command Dir)
+{
+  //if we press North
+ if(Dir == North)
+  pos.y++;
+ else
+   //if we press East
+ if(Dir == East)
+  pos.x++;
+ else
+ if(Dir == West)
+   //if we press West we need to check if x>0 or not
+   //if x>0 it means we pressed East before and so substract one from it
+   if(pos.x > 0)pos.x--;
+ else
+ if(Dir == South)
+   //if we press South we need to check if y>0 or not
+   //if y>0 it means we pressed North before and so substract one from it
+   if(pos.y > 0)pos.y--;
+}//finish the move function
+
+
+/* starting pickup function which is pressed when player find an item in his position 
+   after (look) */
+
+//It's declared in character.h with parameter
+//It's parameter is from class Item which is (item)
+/* We use push_back() because we need to add the chosen item into the inventory 
+   so we can know later what the player carrys */
+
+void Character::PickUp(Item item)
+{
+  cout<<"You PickUp "<<item.title<<endl;
+  Inventory.push_back(item);
+
+}
+
+// drop the item that the player carry in a certin place
+void Character::Drop(int itemIndex)
+{
+  // it's stored in the inventory
+  //'[itemIndex-1]' it means the last elemnt in the array
+ cout<<Inventory[itemIndex-1].title<<" has been droped"<<endl;
+
+ //after drope it, we need to delete it from the inventory
+ Inventory.erase(Inventory.begin() + (itemIndex-1));
+}
+
+//inventory is stored all what the player carrys
+
+int Character::inventory()
+{
+  //It means here if it's not empty
+  if(Inventory.size()>0)
+  {
+    //show what the inventory has
+   cout<<"Your Inventory Contain : "<<endl;
+   //loop because it's an array
+   for(int i=0;i<Inventory.size();i++)
+   {
+    cout<<i+1<<"\\"<<Inventory[i].title<<endl;
+   }
+   return 0;
+  }
+  else //if the inventory empty return -1
+  {
+    cout<<"Your Inventory is empty!"<<endl;
+    return -1;
+  }
+}
+
+
+//this class is from Map.cpp
+//it's get the current position for the player
+
+Pos Character::GetPos()
+{
+ return pos;
+}

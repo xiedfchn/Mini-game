@@ -1,0 +1,125 @@
+/* EE6411
+Group 12 :
+Name : Anfala Aljamie , Hadeel Almogamsi, Blessing Usoro , Dongfeng Xie
+ID:    16103262       ,  16025547       , 16043006       , 16008766     
+*/
+
+//calling Map.h (the header)
+#include"Map.h"
+
+#include<cstdlib>
+
+//defining the default class
+Map::Map()
+{
+  //initilising the position of x
+  pos.x = 0;
+  //initilising the position of y
+  pos.y = 0;
+
+  //We have three possiple result in this position for example [0][0]
+  //1.Enemy 2.Item 3.Empty
+
+  type = rand()%3; //random of these three options
+  
+  //defining a variable to use in switch
+  int temp = rand()%5; //%5 because we have 5 Races (0 to 4)
+
+  //using _race attribute from Race class 
+   Race _race;
+
+   //strting the switch
+   switch(temp)
+   {
+    case 0:
+     _race = Human;
+    break;
+    case 1:
+     _race = Elf;
+    break;
+    case 2:
+     _race = Dwarf;
+    break;
+    case 3:
+     _race = Hobbit;
+    break;
+    case 4:
+     _race = Orc;
+    break;
+   }
+   
+   /* now we will have the anemy with _race that is the output of the 
+      previous switch */
+
+   /* we using enemy that is from charachter class to use then in character.cpp
+      which is creating the character of the enemy */
+   enemy = CreateCharacter(_race);
+}
+
+Map::Map(int x,int y , int raceType)
+{
+ pos.x = x;
+ pos.y = y;
+
+ type = rand()%3;
+
+int temp = raceType;//rand()%5;
+   Race _race;
+   switch(temp)
+   {
+    case 0:
+     _race = Human;
+    break;
+    case 1:
+     _race = Elf;
+    break;
+    case 2:
+     _race = Dwarf;
+    break;
+    case 3:
+     _race = Hobbit;
+    break;
+    case 4:
+     _race = Orc;
+    break;
+   }
+   enemy = CreateCharacter(_race);
+}
+
+Pos Map::GetPos()
+{
+ return pos;
+}
+
+
+string Map::GetInfo()
+{
+  string maptype;
+
+  if(type == 0)
+  {
+   maptype = "you location contain an item";
+  } 
+  else
+  if(type == 1) 
+  { 
+   maptype = "you are facing an enemy and he is "+enemy.title;
+  }
+  else
+  if(type == 2)
+  {
+   maptype = "you location is empty";
+  }
+
+  return maptype;
+}
+
+void Map::SetX(int x)
+{
+ pos.x = x;
+}
+
+void Map::SetY(int y)
+{
+ pos.y = y;
+}

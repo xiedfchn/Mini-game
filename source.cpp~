@@ -1,0 +1,203 @@
+/* EE6411
+Group 12 :
+Name : Anfala Aljamie , Hadeel Almogamsi, Blessing Usoro , Dongfeng Xie
+ID:    16103262       ,  16025547       , 16043006       , 16008766     
+*/
+
+
+#include "GameManager.h"
+#include <algorithm>
+
+
+GameTime gameTime = Daytime;
+Character player;
+vector<Map> map;
+Map *currentPos;
+
+
+void whereAmI()
+{ 
+ Map temp;
+ 
+ for (int i=0;i<map.size();i++){
+   if(map[i].GetPos().x == player.GetPos().x && map[i].GetPos().y == player.GetPos().y ){
+      currentPos = &map[i];
+   }
+ }
+}
+
+void look()
+{
+ cout<<endl;
+
+ whereAmI();
+
+ cout<<currentPos->GetInfo()<<endl;
+ cout<<"the Time is "<<ParseTime(gameTime)<<endl;
+}
+
+string ExecCommand(Command cmd)
+{
+ if(cmd == North)
+ {
+  player.Move(cmd);
+  return "Heading North..";
+ }
+ else
+ if(cmd == East)
+ {
+  player.Move(cmd);
+  return "Heading East..";
+ }
+ else
+ if(cmd == West)
+ {
+  player.Move(cmd);
+  return "Heading West..";
+ }
+ else
+ if(cmd == South)
+ {
+  player.Move(cmd);
+  return "Heading South..";
+ }
+
+
+ else
+ if(cmd == PickUp)
+ {
+  if(currentPos->type == 0)
+  {
+   player.PickUp(currentPos->item);
+   return "Picking Up Item";
+  }
+  return "there is no Item Picking Up!";
+ }
+ else
+ if(cmd == Drop)
+ {
+  int x;
+  if(player.inventory()!= -1)
+  {
+   cout<<"enter the number of the Item You want to Drop:";
+   cin>>x;
+   player.Drop(x);
+  }
+  return "";
+ }
+ else
+ if(cmd == Attack)
+ {
+  if(currentPos->type == 1)
+  {
+   player.Attack(&currentPos->enemy,gameTime);
+   return "you are Attacking " + currentPos->enemy.title;
+  }
+  return "there is no enemy to attack!";
+ }
+ else
+ if(cmd == Defence)
+ {
+  player.Defence(0);
+  return "Defence Mode";
+ }
+ else
+ if(cmd == Look)
+ {
+  look();
+  return "..........";
+ }
+ else
+ if(cmd == Inventory)
+ {
+  player.inventory();
+  return "..........";
+ }
+ else
+ if(cmd == Exit)
+ {
+  cout<<"Your Score is "<<player.gold<<endl;
+  return "Good By";
+ }
+
+
+
+ return "Unknown Command!";
+}
+
+int main()
+{
+ Command cmd;
+ string input;
+ int raceType	= 0;
+ string raceDesc;
+ int NumOfCmd = 0;
+
+ cout<<"------------------------"<<endl;
+ cout<<"	Select your race"<<endl;
+ cout<<"0.Human"<<endl;
+ cout<<"1.Elf"<<endl;
+ cout<<"2.Dwarf"<<endl;
+ cout<<"3.Hobbit"<<endl;
+ cout<<"4.Orc"<<endl;
+ cout<<"------------------------"<<endl;
+ cin>>raceType;
+ switch(raceType)
+   {
+    case 0:
+	player = Character(Human);
+    break;
+    case 1:
+	player = Character(Elf);
+    break;
+    case 2:
+	player = Character(Dwarf);
+    break;
+    case 3:
+	player = Character(Hobbit);
+    break;
+    case 4:
+	player = Character(Orc);
+    break;
+   }
+ 
+ map = InitMap(4,5,raceType);
+
+ cout<<"-----------------------"<<endl;
+ cout<<"-        Welcome      -"<<endl;
+ cout<<"Your title__________ "<<player.title<<endl;
+ cout<<"Your strength_______ "<<player.strength<<endl;
+ cout<<"Your attack_________ "<<player.attack<<endl;
+ cout<<"Your attackChance___ "<<player.attackChance<<endl;
+ cout<<"Your defence________ "<<player.defence<<endl;
+ cout<<"Your defecneChance__ "<<player.defecneChance<<endl;
+ cout<<"Your health_________ "<<player.health<<endl;
+ cout<<"-----------------------"<<endl;
+	
+ while(cmd != Exit)
+ {
+  if(player.health > 0)
+  {
+   if(NumOfCmd == 5)
+   {
+    gameTime = switchTime(gameTime);
+    NumOfCmd = 0;
+
+   }
+    
+   cout<<"Enter Command: ";
+   cin>>input;
+   NumOfCmd++;
+   cmd = parser(input);
+  
+   cout<<"Command Result: "<<ExecCommand(cmd)<<endl;
+  }
+  else
+  {
+    cout<<"Game Over!"<<endl;
+    cout<<"Your Score is "<<player.gold<<endl;
+    break;
+  }
+ }
+return 0;
+}
